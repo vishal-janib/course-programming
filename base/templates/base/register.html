@@ -1,0 +1,27 @@
+<h1>sign in here</h1>
+
+<body>
+    <form action="" method="POST">
+        {% csrf_token %} 
+        username :<br><input type="text" placeholder="user name" name="username"><br>       
+        *your username should be unique<br><br> 
+        your email :<br><input type="email" placeholder="email" name="email"><br> 
+        *enter valid email to get otp<br><br> 
+        create password:<br><input type="text" placeholder="password" name="password1"><br><br> re-enter
+        pass :<br><input type="text" placeholder="password" name="password2"><br><br>
+        <button type="submit">Register</button>
+    </form>
+</body>
+
+{% if messages %}
+    <ul class="messages">
+       {% for message in messages %}
+       <li></li>{{ message }}</li>
+       {% endfor %}
+    </ul>
+{% endif %}
+
+
+
+
+    
