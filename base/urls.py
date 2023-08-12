@@ -11,7 +11,9 @@ urlpatterns = [
     path('update-room/<str:pk>/',views.updateRoom, name="update-room"),
     path('home/deleteRoom/<str:pk>/',views.deleteRoom),
     #path('register/',views.register, name='register'),
-    path('otp/',views.otp, name='otp'),
-    path('Membership/', views.Membership,name='Membership')
+    path('otp/<str:pk>/',views.otp, name='otp'),
+    path('otpStaff/<str:pk>/',views.otpStaff, name='otpStaff'),
+    path('Membership/', views.Membership,name='Membership'),
+    path('MembershipStaff/', views.MembershipStaff,name='MembershipStaff')
 
 ]

@@ -10,6 +10,7 @@ from .forms import RoomForm, MemberForm
 from django.core.mail import send_mail
 import random
 from django.conf import settings
+
 # Create your views here.
 #rooms=[
  #   {'id':1, 'name':'Lets learn Python'},
@@ -21,12 +22,18 @@ from django.conf import settings
 #  
 
 def Membership(request):
+    email = request.POST.get('email')
     if request.method=='POST':
         username = request.POST.get('username')
         password1 = request.POST.get('password1')
         email = request.POST.get('email')
+        password2 = request.POST.get('password2')
+
+        if password1 != password2:
+            messages.error(request, 'Both passwords should match!!')
+            return render(request, 'register.html')
         try:
-            user = User.objects.get(username=username)
+            user = User.objects.get(email=email)
             messages.error(request, 'User does Exist.')
         except:
             user = User.objects.create_user(
@@ -34,9 +41,33 @@ def Membership(request):
                 password=password1,
                 email=email
             )
-            return redirect('otp')
-
+            email = request.POST.get('email')
+            return redirect('otp',email)
     return render(request,'base/register.html')
+
+def MembershipStaff(request):
+    email = request.POST.get('email')
+    if request.method=='POST':
+        username = request.POST.get('username')
+        password1 = request.POST.get('password1')
+        email = request.POST.get('email')
+        password2 = request.POST.get('password2')
+
+        if password1 != password2:
+            messages.error(request, 'Both passwords should match!!')
+            return render(request, 'register_staff.html')
+        try:
+            user = User.objects.get(email=email)
+            messages.error(request, 'User does Exist.')
+        except:
+            user = User.objects.create_superuser(
+                username=username,
+                password=password1,
+                email=email
+            )
+            email = request.POST.get('email')
+            return redirect('otpStaff',email)
+    return render(request,'base/register_staff.html')
 
     # global registered
     # global u1
@@ -65,23 +96,38 @@ def Membership(request):
 
 global no
 no=0
-def otp(request,context):
+def otp(request,pk):
+    # user=User.objects.get(email=pk)
     global no
     if request.method == 'POST':
         otp = request.POST.get('otp', '')
         if(int(otp)==int(no)):
             return redirect('login')
         else:
-            u = Member.objects.filter(Name=u1)
+            u = User.objects.get(email=pk)
             u.delete()
-            us=User.objects.get(username=u1)
-            us.delete()
-            return HttpResponse('Invalid OTP')
-
+            return redirect('Membership')
     else:
         no = random.randrange(1000,9999)
-        send_mail('Your OTP for verification','Your OTP is {}'.format(no),'vishaljanib@gmail.com',['vishalcj12@gmail.com'],fail_silently=False)
+        send_mail('Your OTP for verification','Your OTP is {}'.format(no),'vishaljanib@gmail.com',[pk],fail_silently=False)
         return render(request, 'base/otp.html', {})
+
+no=0
+def otpStaff(request,pk):
+    # user=User.objects.get(email=pk)
+    global no
+    if request.method == 'POST':
+        otp = request.POST.get('otpStaff', '')
+        if(int(otp)==int(no)):
+            return redirect('login')
+        else:
+            u = User.objects.get(email=pk)
+            u.delete()
+            return redirect('MembershipStaff')
+    else:
+        no = random.randrange(1000,9999)
+        send_mail('Your OTP for verification','Your OTP is {}'.format(no),'vishaljanib@gmail.com',[pk],fail_silently=False)
+        return render(request, 'base/otp_staff.html', {})
 
 
 def loginPage(request):
