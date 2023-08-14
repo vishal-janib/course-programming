@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, HttpResponseRedirect
 from .models import Room, Topic
-from django.http import HttpResponse
+from django.http import FileResponse, HttpResponse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
@@ -9,17 +9,14 @@ from django.contrib.auth import authenticate, login, logout
 from .forms import RoomForm, MemberForm
 from django.core.mail import send_mail
 import random
+import os
 from django.conf import settings
 
-# Create your views here.
-#rooms=[
- #   {'id':1, 'name':'Lets learn Python'},
-  #  {'id':2, 'name':'Lets learn Django'},
-   # {'id':3, 'name':'Lets learn Html'},
-#]
-# 
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from django.shortcuts import get_object_or_404
+from django.templatetags.static import static
 
-#  
 
 def Membership(request):
     email = request.POST.get('email')
@@ -68,31 +65,6 @@ def MembershipStaff(request):
             email = request.POST.get('email')
             return redirect('otpStaff',email)
     return render(request,'base/register_staff.html')
-
-    # global registered
-    # global u1
-    # registered=False
-    # if (request.method == 'POST'):
-    #     Member = MemberForm(request.POST,request.FILES)
-    #     if Member.is_valid():
-    #         user=Member.save()
-    #         username = request.POST.get('Name', '')
-    #         u1=username
-    #         password = request.POST.get('password', '')
-    #         email = request.POST.get('email', '')
-    #         user.save()
-    #         user = authenticate(request, username=username, password=password, email=email)
-    #         if user is None:
-    #             user = get_user_model().objects.create_user(username=username, password=password, email=email)
-    #             user.save()
-    #     else:
-    #         print('user_form.errors')
-    #     emaili=request.POST.get('email', '')
-    #     print(emaili)
-    #     return redirect('otp')
-    # else:
-    #     Member=MemberForm()
-    #     return render(request,'base/register.html',{'mem':Member, 'registered':registered})
 
 global no
 no=0
@@ -202,6 +174,16 @@ def updateRoom(request, pk):
     context = {'form': form}
     return render (request, 'base/room_form.html', context)
 
+def pdf_view(request):
+    name=request.FILES('name', "")
+    filename = "pacewisdom/media/pdfs/"+name+".pdf"
+    with open(filename, 'rb') as pdf:
+        response = HttpResponse(pdf.read(), content_type ='application/pdf')
+        response['Content-Disposition'] = 'inline;filename=some_file.pdf'
+        return response
+    pdf.closed
+
+    
 def deleteRoom(request,pk):
     room = Room.objects.get(id=pk)
     
