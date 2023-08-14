@@ -18,7 +18,7 @@ urlpatterns = [
     path('MembershipStaff/', views.MembershipStaff,name='MembershipStaff'),
     path('media/pdfs/some_file.pdf/',views.pdf_view, name='pdfs')
  ]
- #urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+ urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # path('pdf_view/', views.pdf_view,name='pdf_view')
     # PATH('show_pdf/', views.show_pdf, name='show_pdf')
